@@ -9,6 +9,8 @@
 #include <chrono>
 #include <array>
 #include <cstring>
+#include <cstdio>
+#include <cmath>
 
 namespace NFSU2 {
 
