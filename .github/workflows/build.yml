@@ -65,7 +65,7 @@ jobs:
               <key>CFBundlePackageType</key>
               <string>APPL</string>
               <key>CFBundleShortVersionString</key>
-              <string>2.0.0</string>
+              <string>1.0.0</string>
               <key>NSHighResolutionCapable</key>
               <true/>
           </dict>
@@ -139,7 +139,7 @@ jobs:
   release:
     name: Publish GitHub Release
     needs: [ build-macos-dmg, build-windows-exe ]
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifacts
@@ -147,9 +147,35 @@ jobs:
         with:
           path: artifacts
 
-      - name: Create GitHub Release with DMG & EXE
+      - name: Create / Update GitHub Release with DMG & EXE
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || 'v1.0.0' }}
+          name: "Open NFS BIN Viewer ${{ github.ref_type == 'tag' && github.ref_name || 'v1.0.0' }} — Windows (x64) & macOS (Apple Silicon)"
+          prerelease: false
+          draft: false
+          body: |
+            ## 🏎️ Open NFS BIN Viewer — Native Vulkan 3D `.BIN` & `.BUN` Inspector
+
+            Universal hardware-accelerated 3D geometry, map, and texture pack (`JDLZ` / `TPK`) inspector for **Need for Speed: Underground 2** *(Fully Tested & Verified)*, **Need for Speed: Most Wanted (2005)**, and **Need for Speed: Carbon (2006)**.
+
+            ---
+
+            ### 📦 Platform Downloads (Which file should I download?)
+
+            | Operating System | Architecture | File to Download | Description & Setup |
+            | :--- | :--- | :--- | :--- |
+            | **🍎 macOS** | **Apple Silicon (`M1` / `M2` / `M3` / `M4` - ARM64)** | **`NFSU2-BIN-Opener-macOS-AppleSilicon.dmg`** | **macOS Disk Image** containing `NFSU2 BIN Opener.app` (native Vulkan via **MoltenVK**).<br>1. Install runtime libraries via Homebrew: `brew install glfw vulkan-loader molten-vk`<br>2. Open the `.dmg`, drag **`NFSU2 BIN Opener.app`** to `/Applications`, and launch. |
+            | **🪟 Windows** | **64-bit (`x64`)** | **`NFSU2-BIN-Opener-Windows-x64.zip`** *(Recommended)* | **Complete Portable Windows Package** containing `NFSU2_BIN_Opener.exe` and the compiled SPIR-V `shaders/` folder.<br>1. Extract the `.zip` archive to any folder.<br>2. Double-click **`NFSU2_BIN_Opener.exe`** (keep `shaders/` next to the `.exe`). |
+            | **🪟 Windows** | **64-bit (`x64`)** | **`NFSU2_BIN_Opener.exe`** | Standalone Windows 64-bit executable (requires the `shaders/vert.spv` and `shaders/frag.spv` folder in the working directory). |
+
+            ---
+
+            ### ✨ Highlights in This Release
+            - **VS Code-Style File Explorer Sidebar** with instant asset badges (`CAR`, `3D`, `MAP`, `TEX`, `DIR`) & diagnostic alerts for unsupported files.
+            - **Chrome / VS Code Multi-Tab Bar** — open multiple `.BIN` / `.BUN` files simultaneously with zero background GPU overhead.
+            - **Blender-Style 3D Viewport Header Bar** — clickable **`[ − ]` / `[ + ]` Zoom**, **Live Zoom Percentage & Distance Readout (`Zoom 100% (4.5m)`)**, **`[ ⌖ Reset View ]`**, **Wireframe Mode (`Z`)**, **Textures Toggle (`T`)**, **Auto-Rotate (`Space`)**, and **7 Paint Swatches (`1..7`)**.
+            - **`WASD` + `Q/E` Free-Flight Camera** (`Shift` for `3.5x` turbo speed) + **Right-Click Drag Pan** + wide-range zoom (`0.05m` to `300.0m`) to explore showrooms (`MegaloShop01.BIN`, `CarLot01.BIN`) and Bayview map districts (`STREAML4RA..J.BUN`).
           files: |
             artifacts/NFSU2-BIN-Opener-macOS-AppleSilicon-DMG/NFSU2-BIN-Opener-macOS-AppleSilicon.dmg
             artifacts/NFSU2-BIN-Opener-Windows-x64-EXE/NFSU2-BIN-Opener-Windows-x64.zip
