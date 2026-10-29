@@ -1,0 +1,23 @@
+# Build directories
+build/
+cmake-build-*/
+dist/
+out/
+
+# Compiled binaries & packages
+nfsu2_vulkan
+*.exe
+*.dmg
+*.zip
+*.app/
+*.spv
+
+# macOS / Windows OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+
